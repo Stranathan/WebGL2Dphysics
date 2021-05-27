@@ -17,7 +17,16 @@ var vec4 = glMatrix.vec4;
 var mat4 = glMatrix.mat4;
 var mat3 = glMatrix.mat3;
 
+// ------------------ World Settings ------------------
+var theHeight = 30;
+
+// ------------------ Physics Settings ------------------
+var littleG = -9.8;
+
 // ------------------ Attribute binding points ------------------
 var positionAttribLoc = 0;
 var normalAttribLoc = 1;
 var colorAttribLoc = 2;
+
+// ------------------ Geometry Magic numbers ------------------
+circleNumSides = 32;

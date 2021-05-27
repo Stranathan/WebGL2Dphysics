@@ -8,10 +8,10 @@ class Renderer
         this.renderables = new Array();
         //
         this.aspectRatio = this.gl.canvas.width / this.gl.canvas.height;
-        this.orthoHeight = 20;
+        this.orthoHeight = theHeight; // settings
         this.orthoWidth = this.orthoHeight * this.aspectRatio;
         //
-        this.pos = vec4.fromValues(0, 0, -1, 1.);
+        this.pos = vec4.fromValues(0, 0, 1, 1.);
         this.up = vec4.fromValues(0.0, 1.0, 0.0, 1.0);
         this.target = vec3.fromValues(0.0, 0.0, 0.0);
         this.view = mat4.create();
@@ -34,6 +34,16 @@ class Renderer
     }
     initVAOS()
     {
+        // ---- Triangle ----
+        var triangleVAO = this.gl.createVertexArray();
+        this.gl.bindVertexArray(triangleVAO);
+        var triangleVBO = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, triangleVBO);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(theUnitTriangle), this.gl.STATIC_DRAW);
+        this.gl.vertexAttribPointer(positionAttribLoc, 3, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(positionAttribLoc);
+        this.availableVaos.set("triangle", triangleVAO);
+        // ---- Rectangle ----
         var rectangleVAO = this.gl.createVertexArray();
         this.gl.bindVertexArray(rectangleVAO);
         var rectangleVBO = this.gl.createBuffer();
@@ -42,6 +52,16 @@ class Renderer
         this.gl.vertexAttribPointer(positionAttribLoc, 3, this.gl.FLOAT, false, 0, 0);
         this.gl.enableVertexAttribArray(positionAttribLoc);
         this.availableVaos.set("rectangle", rectangleVAO);
+        // ---- Circle ----
+        var circleVAO = this.gl.createVertexArray();
+        this.gl.bindVertexArray(circleVAO);
+        var circleVBO = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, circleVBO);
+        let aCircleData = makeACircle(circleNumSides, 1.0);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(aCircleData.vertexData), this.gl.STATIC_DRAW);
+        this.gl.vertexAttribPointer(positionAttribLoc, 3, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(positionAttribLoc);
+        this.availableVaos.set("circle", circleVAO);
     }
     initShaderPrograms()
     {
@@ -79,9 +99,7 @@ class Renderer
         {
             this.gl.bindVertexArray(this.renderables[i].vao);
             this.gl.useProgram(this.renderables[i].program);
-            let newTrans = mat4.create();
-            mat4.translate(newTrans, newTrans, [10. * Math.cos(time), 10. * Math.sin(time), 0.])
-            this.renderables[i].transform = newTrans;
+            
             for( let uniform in this.renderables[i].uniforms)
             {
                 switch(uniform)
