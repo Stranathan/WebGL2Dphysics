@@ -6,13 +6,19 @@ class Polygon
         this.radius = radius;
         this.numPoints = npoints;
         this.vertices = new Array();
+
+        this.normalPlaneRadialScale = 4;
+        this.normalPlaneAxialScale = 1000;
         //this.normals = new Array();
-        this.col = aCol;
+        this.outlineCol = aCol;
+        this.normalCol = [255, 0, 0];
+        this.projectionAxesCol = [aCol[0]/ 2, aCol[1] / 2, aCol[2] / 2];
         this.init();
+        this.normalsAndPlanesDisplay = true;
     }
     init()
     {
-        stroke(this.col[0], this.col[1], this.col[2]);
+        stroke(this.outlineCol[0], this.outlineCol[1], this.outlineCol[2]);
         let theta = 0;
         let deltaTheta = TWO_PI / this.numPoints;
         beginShape();
@@ -41,14 +47,105 @@ class Polygon
             this.vertices[i+1] += relY;
         }
     }
+    drawNormalsAndNormalPlanes()
+    {
+        // this.vertices = [x0, y0, x1, y1 ... xN, yN]
+        for(let i = 0; i < this.vertices.length; i+=2)
+        {
+            let edge;
+            let normal;
+            let slope;
+
+            if(i < this.vertices.length - 2) // to not null ref array
+            {
+                edge = [this.vertices[i + 2] - this.vertices[i], 	
+                        this.vertices[i + 3] - this.vertices[i + 1] ];
+                normal = [edge[1], - edge[0]];
+                slope = edge[1] / edge[0];
+                console.log
+                // normal
+                stroke(this.normalCol[0], this.normalCol[1], this.normalCol[2]);
+                line(this.vertices[i    ] + (edge[0] / 2),
+                    this.vertices[i + 1] + (edge[1] / 2),
+                    this.vertices[i    ] + (edge[0] / 2) + normal[0],
+                    this.vertices[i + 1] + (edge[1] / 2) + normal[1]
+                    );
+
+                // normal plane
+                stroke(this.projectionAxesCol[0], this.projectionAxesCol[1], this.projectionAxesCol[2]);
+                //
+                let x0 = this.vertices[i    ] + normal[0] * this.normalPlaneRadialScale;
+                let y0 = this.vertices[i + 1] + normal[1] * this.normalPlaneRadialScale;
+                let x1 = this.vertices[i + 2] + normal[0] * this.normalPlaneRadialScale;
+                let y1 = this.vertices[i + 3] + normal[1] * this.normalPlaneRadialScale;
+
+                if(slope == Infinity || slope == -Infinity)
+                {
+                    let smallerYCoord = Math.min(y0, y1);
+                    let biggerYCoord = (y0 + y1) - smallerYCoord;
+                    smallerYCoord -= this.normalPlaneAxialScale;
+                    biggerYCoord += this.normalPlaneAxialScale;
+                    line(x0, smallerYCoord, x1, biggerYCoord);
+                }
+                else
+                {
+                    let scaledCoord0 = linearScale(x0, y0, x0 - this.normalPlaneAxialScale, slope);
+                    let scaledCoord1 = linearScale(x1, y1, x1 + this.normalPlaneAxialScale, slope);
+                    line(scaledCoord0[0], scaledCoord0[1], scaledCoord1[0], scaledCoord1[1]);
+                }
+            }
+            else
+            {
+                edge = [this.vertices[0] - this.vertices[i], this.vertices[1] - this.vertices[i + 1]];
+                normal = [edge[1], - edge[0]];
+                slope = edge[1] / edge[0];
+
+                // normal
+                stroke(this.normalCol[0], this.normalCol[1], this.normalCol[2]);
+                line(this.vertices[i   ]  + (edge[0] / 2),
+                     this.vertices[i + 1] + (edge[1] / 2),
+                     this.vertices[i    ] + (edge[0] / 2) + normal[0],
+                     this.vertices[i + 1] + (edge[1] / 2) + normal[1]
+                    );
+                
+                stroke(this.projectionAxesCol[0], this.projectionAxesCol[1], this.projectionAxesCol[2]);
+                // radially scale out:
+                let x0 = this.vertices[0    ] + normal[0] * this.normalPlaneRadialScale;
+                let y0 = this.vertices[1    ] + normal[1] * this.normalPlaneRadialScale;
+                let x1 = this.vertices[i    ] + normal[0] * this.normalPlaneRadialScale;
+                let y1 = this.vertices[i + 1] + normal[1] * this.normalPlaneRadialScale;
+
+                // draw the normal planes
+                if(slope == Infinity || slope == -Infinity)
+                {
+                    let smallerYCoord = Math.min(y0, y1);
+                    let biggerYCoord = (y0 + y1) - smallerYCoord;
+                    smallerYCoord -= this.normalPlaneAxialScale;
+                    biggerYCoord += this.normalPlaneAxialScale;
+                    line(x0, smallerYCoord, x1, biggerYCoord);
+                }
+                else
+                {
+                    let scaledCoord0 = linearScale(x0, y0, x0 - this.normalPlaneAxialScale, slope);
+                    let scaledCoord1 = linearScale(x1, y1, x1 + this.normalPlaneAxialScale, slope);
+                    line(scaledCoord0[0], scaledCoord0[1], scaledCoord1[0], scaledCoord1[1]);
+                }
+            }
+        }
+    }
     display()
     {
-        stroke(this.col[0], this.col[1], this.col[2]);
+        stroke(this.outlineCol[0], this.outlineCol[1], this.outlineCol[2]);
         beginShape();
         for (let i = 0; i < this.vertices.length; i+=2)
         {
             vertex(this.vertices[i], this.vertices[i + 1]);
         }
 	    endShape(CLOSE);
+
+        if(this.normalsAndPlanesDisplay)
+        {
+            this.drawNormalsAndNormalPlanes();
+        }
     }
 }
