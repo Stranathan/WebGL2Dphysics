@@ -272,6 +272,30 @@ function seperatingAxisTheorem(polygonRef1, polygonRef2)
     }
 }
 
+/* 
+    Check bounding circle radius squared of each polygon with every other polygon once
+*/
 function pseudoBroadPhase(arrOfPolys)
 {
+    for(let i = 0; i < arrOfPolygons.length; i++)
+    {
+        j = i;
+        
+        while(j < arrOfPolygons.length - 1)
+        {
+            j += 1;
+
+            let sqrdDist = vec2.squaredDistance(arrOfPolys[i].pos, arrOfPolys[j].pos);
+            if(sqrdDist < Math.pow(arrOfPolys[i].radius + arrOfPolys[j].radius, 2))
+            {
+                arrOfPolys[i].outlineCol = [255, 255, 0];
+                arrOfPolys[j].outlineCol = [255, 255, 0];
+            }
+            else
+            {
+                arrOfPolys[i].outlineCol = arrOfPolys[i].defaultOutlineCol;
+                arrOfPolys[j].outlineCol = arrOfPolys[j].defaultOutlineCol;
+            }
+        }
+    }
 }

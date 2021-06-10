@@ -1,11 +1,5 @@
 "use strict";
 
-var vec2 = glMatrix.vec2;
-var vec3 = glMatrix.vec3;
-var vec4 = glMatrix.vec4;
-var mat4 = glMatrix.mat4;
-var mat3 = glMatrix.mat3;
-
 var arrOfPolygons = new Array();
 
 function setup() 
@@ -15,8 +9,11 @@ function setup()
 	
 	noFill();
 
-	let aPolygon = new Polygon([400, 400],  40,  5, [255,   255, 255]);
+	let aPolygon = new Polygon([600, 100],  40,  5, [255,   255, 255]);
+	let anotherPolygon = new Polygon([400, 400],  80,  3, [255,   255, 255]);
+
 	arrOfPolygons.push(aPolygon);
+	arrOfPolygons.push(anotherPolygon);
 }
 function draw() 
 {
@@ -24,8 +21,10 @@ function draw()
 	background(40);
 	arrOfPolygons[0].translate([mouseX, mouseY]);
 
+	pseudoBroadPhase(arrOfPolygons);
 	for(let i in arrOfPolygons)
 	{
 		arrOfPolygons[i].display();
 	}
+
 }

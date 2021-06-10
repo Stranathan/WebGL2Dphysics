@@ -2,19 +2,20 @@ class Polygon
 {
     constructor(pos, radius, npoints, aCol)
     {
-        this.pos = pos;
+        this.pos = vec2.fromValues(pos[0], pos[1]);
         this.radius = radius;
         this.numPoints = npoints;
         this.vertices = new Array();
-
         this.normalPlaneRadialScale = 4;
         this.normalPlaneAxialScale = 1000;
         //this.normals = new Array();
-        this.outlineCol = aCol;
+        this.defaultOutlineCol = aCol;
+        this.outlineCol = this.defaultOutlineCol;
         this.normalCol = [255, 0, 0];
         this.projectionAxesCol = [aCol[0]/ 2, aCol[1] / 2, aCol[2] / 2];
+        this.boundingCircleCol = [255, 0, 255];
+        this.normalsAndPlanesDisplay = false;
         this.init();
-        this.normalsAndPlanesDisplay = true;
     }
     init()
     {
@@ -133,6 +134,12 @@ class Polygon
             }
         }
     }
+    drawBoundingCircle()
+    {
+        stroke(this.boundingCircleCol[0], this.boundingCircleCol[1], this.boundingCircleCol[2]);
+        
+        ellipse(this.pos[0], this.pos[1], this.radius * 2, this.radius * 2);
+    }
     display()
     {
         stroke(this.outlineCol[0], this.outlineCol[1], this.outlineCol[2]);
@@ -142,7 +149,8 @@ class Polygon
             vertex(this.vertices[i], this.vertices[i + 1]);
         }
 	    endShape(CLOSE);
-
+        this.drawBoundingCircle();
+        
         if(this.normalsAndPlanesDisplay)
         {
             this.drawNormalsAndNormalPlanes();
