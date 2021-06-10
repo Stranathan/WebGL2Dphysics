@@ -11,9 +11,10 @@ class Polygon
         //this.normals = new Array();
         this.defaultOutlineCol = aCol;
         this.outlineCol = this.defaultOutlineCol;
+        this.collisionCol = [255, 0, 255];
         this.normalCol = [255, 0, 0];
         this.projectionAxesCol = [aCol[0]/ 2, aCol[1] / 2, aCol[2] / 2];
-        this.boundingCircleCol = [255, 0, 255];
+        this.boundingCircleCol = [255, 192, 203];
         this.normalsAndPlanesDisplay = false;
         this.init();
     }
@@ -30,6 +31,10 @@ class Polygon
             theta += deltaTheta;
             this.vertices.push(xx);
             this.vertices.push(yy);
+            
+            // console.log(a);
+            // console.log(this.vertices[a]);
+            
             vertex(xx, yy);
         }
 	    endShape(CLOSE);
