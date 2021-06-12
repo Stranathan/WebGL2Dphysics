@@ -3,27 +3,36 @@
 */
 function pseudoBroadPhase(arrOfPolys)
 {
-    for(let i = 0; i < arrOfPolygons.length; i++)
+    for(let i = 0; i < arrOfPolygons.length - 1; i++)
     {
-        j = i;
+        let j = i + 1;
         
-        while(j < arrOfPolygons.length - 1)
+        while(j < arrOfPolygons.length)
         {
-            j += 1;
-
             let sqrdDist = vec2.squaredDistance(arrOfPolys[i].pos, arrOfPolys[j].pos);
             if(sqrdDist < Math.pow(arrOfPolys[i].radius + arrOfPolys[j].radius, 2))
             {
-                //arrOfPolys[i].outlineCol = [255, 255, 0];
-                //arrOfPolys[j].outlineCol = [255, 255, 0];
                 // narrow phase resolution
-                SAT(arrOfPolys[i], arrOfPolys[j])
+                let collisionObject = SAT(arrOfPolys[i], arrOfPolys[j]);
+
+                if(collisionObject.collision)
+                {
+                    stroke([0, 0, 255]);
+                    line(arrOfPolys[i].pos[0],
+                        arrOfPolys[i].pos[1],
+                        arrOfPolys[i].pos[0] + collisionObject.mvt[0],
+                        arrOfPolys[i].pos[0] + collisionObject.mvt[1]);
+
+                    arrOfPolys[i].outlineCol = arrOfPolys[i].collisionCol;
+                    arrOfPolys[j].outlineCol = arrOfPolys[j].collisionCol;
+                }
+                else
+                {
+                    arrOfPolys[i].outlineCol = arrOfPolys[i].defaultOutlineCol;
+                    arrOfPolys[j].outlineCol = arrOfPolys[j].defaultOutlineCol;
+                }
             }
-            else
-            {
-                arrOfPolys[i].outlineCol = arrOfPolys[i].defaultOutlineCol;
-                arrOfPolys[j].outlineCol = arrOfPolys[j].defaultOutlineCol;
-            }
+            j += 1;
         }
     }
 }
@@ -38,32 +47,37 @@ function pseudoBroadPhase(arrOfPolys)
     
     aPolygon.vertices = [x0, y0, x1, y1 ... xN, yN]
 
-    keep it D.R.Y --> nested function for project lenght comparisons
+    keep it D.R.Y --> nested function for projected length comparisons
 */
 function SAT(polygonReferenceA, polygonReferenceB)
 {
-    function projectedLengthComparison(polygonA, polygonB)
+    function projectedLengthComparison(polygonA, polygonB, mvtReference)
     {
+        
         let overlapBool;
+        let mvtMagnitude;
+        let mvtDir;
 
         for(let i = 0; i < polygonA.vertices.length; i+=2)
         {
             let edge;
-   
-            // each edge to the last vertex
+            let normal;
+            // edges and normals from first vertex until second to last vertex
             if(i < polygonA.vertices.length - 2)
             {
                 edge = vec2.fromValues(polygonA.vertices[i + 2] - polygonA.vertices[i], 	
                         polygonA.vertices[i + 3] - polygonA.vertices[i + 1] );
+                normal = vec2.fromValues(edge[1], -edge[0]);
             }
-            // edge connecting last vertex to first vertex
+            // edge and normal from last vertex to first vertex
             else
             {
                 edge = vec2.fromValues(polygonA.vertices[0] - polygonA.vertices[i], polygonA.vertices[1] - polygonA.vertices[i + 1]);
+                normal = vec2.fromValues(edge[1], -edge[0]);
             }
 
             // Create normalized axis from each edge of polygon 
-            vec2.normalize(edge, edge);
+            vec2.normalize(normal, normal);
             
             // Project each vertex's position vector of both polygons onto the axis.
             let minA;
@@ -71,9 +85,8 @@ function SAT(polygonReferenceA, polygonReferenceB)
             for(let a = 0; a < polygonA.vertices.length; a+=2)
             {
                 let vertexPositionVec = vec2.fromValues(polygonA.vertices[a], polygonA.vertices[a + 1]);
-                let projectedLen = vec2.dot(edge, vertexPositionVec);
+                let projectedLen = vec2.dot(normal, vertexPositionVec);
                 
-                //console.log(vec2.str(vertexPositionVec));
                 if(a == 0)
                 {
                     minA = projectedLen;
@@ -90,11 +103,8 @@ function SAT(polygonReferenceA, polygonReferenceB)
             for(let b = 0; b < polygonB.vertices.length; b+=2)
             {
                 let vertexPositionVec = vec2.fromValues(polygonB.vertices[b], polygonB.vertices[b + 1]);
-                // if(isNaN(polygonA.vertices[b]))
-                // {
-                //     console.log("check index: " + b);
-                // }
-                let projectedLen = vec2.dot(edge, vertexPositionVec);
+                let projectedLen = vec2.dot(normal, vertexPositionVec);
+
                 if(b == 0)
                 {
                     minB = projectedLen;
@@ -109,33 +119,59 @@ function SAT(polygonReferenceA, polygonReferenceB)
 
             if(maxA >= maxB && maxB >= minA)
             {
+                if(i == 0)
+                {
+                    mvtMagnitude =  maxB - minA;
+                    mvtDir = normal;
+                }
+                else
+                {
+                    if(mvtMagnitude > (maxB - minA))
+                    {
+                        mvtMagnitude =  maxB - minA;
+                        mvtDir = normal;
+                    }
+                }
                 overlapBool = true;
-                //console.log("we're in here");
             }
             else if(maxB >= maxA && maxA >= minB)
             {
+                if(i == 0)
+                {
+                    mvtMagnitude =  maxA - minB;
+                    mvtDir = normal;
+                }
+                else
+                {
+                    if(maxA - minB < mvtMagnitude)
+                    {
+                        mvtMagnitude =  maxA - minB;
+                        mvtDir = normal;
+                    }
+                }
                 overlapBool = true;
-                //console.log("estamos aqui");
             }
             else
             {
                 return false
             }
         }
+        
+        vec2.scale(mvtReference, mvtDir, mvtMagnitude);
         return overlapBool;
     }
+
+    // --------   --------
+    let minimumTranslationVector = vec2.create();
     // -------- check using edges of polygonA --------
-    var overlap = projectedLengthComparison(polygonReferenceA, polygonReferenceB);
-    if(overlap == false)
+    if(!projectedLengthComparison(polygonReferenceA, polygonReferenceB, minimumTranslationVector))
     {
-        return;
+        return {collision: false, mvt: vec2.create()};
     }
     // -------- check using edges of polygonB --------
-    overlap = projectedLengthComparison(polygonReferenceB, polygonReferenceA);
-    if(overlap == false)
+    if(!projectedLengthComparison(polygonReferenceB, polygonReferenceA, minimumTranslationVector))
     {
-        return;
+        return {collision: false, mvt: vec2.create()};
     }
-    polygonReferenceA.outlineCol = polygonReferenceA.collisionCol;
-    polygonReferenceB.outlineCol = polygonReferenceB.collisionCol;
+    return {collision: true, mvt: minimumTranslationVector}
 }

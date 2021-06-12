@@ -6,16 +6,22 @@ class Polygon
         this.radius = radius;
         this.numPoints = npoints;
         this.vertices = new Array();
+
+        // settings
         this.normalPlaneRadialScale = 4;
         this.normalPlaneAxialScale = 1000;
-        //this.normals = new Array();
+
+        // colors
         this.defaultOutlineCol = aCol;
         this.outlineCol = this.defaultOutlineCol;
         this.collisionCol = [255, 0, 255];
         this.normalCol = [255, 0, 0];
         this.projectionAxesCol = [aCol[0]/ 2, aCol[1] / 2, aCol[2] / 2];
         this.boundingCircleCol = [255, 192, 203];
+
+        // state
         this.normalsAndPlanesDisplay = false;
+        this.isColliding = false;
         this.init();
     }
     init()
@@ -32,25 +38,17 @@ class Polygon
             this.vertices.push(xx);
             this.vertices.push(yy);
             
-            // console.log(a);
-            // console.log(this.vertices[a]);
-            
             vertex(xx, yy);
         }
 	    endShape(CLOSE);
     }
-    translate(aTranslationVec)
+    translate(translationVec)
     {
-        let relX = aTranslationVec[0] - this.pos[0];
-        let relY = aTranslationVec[1] - this.pos[1];
-        this.pos[0] = aTranslationVec[0];
-        this.pos[1] = aTranslationVec[1];
-
-        // go through each vertex and translate by same vector
+        vec2.add(this.pos, this.pos, translationVec);
         for(let i = 0; i < this.vertices.length; i+=2)
         {
-            this.vertices[i] += relX;
-            this.vertices[i+1] += relY;
+            this.vertices[i] += translationVec[0];
+            this.vertices[i+1] += translationVec[1];
         }
     }
     drawNormalsAndNormalPlanes()
@@ -154,8 +152,17 @@ class Polygon
             vertex(this.vertices[i], this.vertices[i + 1]);
         }
 	    endShape(CLOSE);
-        this.drawBoundingCircle();
+
+        //this.drawBoundingCircle();
         
+        if (this.isColliding)
+        {
+            this.outlineCol = this.collisionCol;
+        }
+        else
+        {
+            this.outlineCol = this.defaultOutlineCol;
+        }
         if(this.normalsAndPlanesDisplay)
         {
             this.drawNormalsAndNormalPlanes();
