@@ -51,6 +51,28 @@ class Polygon
             this.vertices[i+1] += translationVec[1];
         }
     }
+    rotate(angle)
+    {
+        let theta = toRadians(angle);
+        let translationVec = vec2.create();
+        vec2.scale(translationVec, this.pos, -1)
+        this.translate(translationVec);
+
+        for(let i = 0; i < this.vertices.length; i+=2)
+        {
+            let x = Math.cos(theta) * this.vertices[i] - Math.sin(theta) * this.vertices[i + 1];
+            let y = Math.sin(theta) * this.vertices[i] + Math.cos(theta) * this.vertices[i + 1];
+            this.vertices[i    ] = x;
+            this.vertices[i + 1] = y;
+        }
+
+        vec2.scale(translationVec, translationVec, -1)
+        this.translate(translationVec);
+
+        // let rotMat = mat2.create();
+        // mat2.rotate(rotMat, rotMat, theta);
+        // vec2.transformMat2(this.pos, this.pos, rotMat)
+    }
     drawNormalsAndNormalPlanes()
     {
         // this.vertices = [x0, y0, x1, y1 ... xN, yN]
@@ -153,7 +175,7 @@ class Polygon
         }
 	    endShape(CLOSE);
 
-        //this.drawBoundingCircle();
+        this.drawBoundingCircle();
         
         if (this.isColliding)
         {

@@ -23,7 +23,10 @@ function toDegrees(rad)
 {
 	return rad * (180.0 / Math.PI);
 }
-
+function toRadians(deg)
+{
+	return (deg * Math.PI / 180.0);
+}
 function linearScale(x0, y0, x, m)
 {
     return [x, ( m * (x - x0) + y0)];

@@ -17,14 +17,14 @@ function pseudoBroadPhase(arrOfPolys)
 
                 if(collisionObject.collision)
                 {
-                    stroke([0, 0, 255]);
-                    line(arrOfPolys[i].pos[0],
-                        arrOfPolys[i].pos[1],
-                        arrOfPolys[i].pos[0] + collisionObject.mvt[0],
-                        arrOfPolys[i].pos[0] + collisionObject.mvt[1]);
-
+                    // stroke([255, 255, 0]);
+                    // line(arrOfPolys[i].pos[0],
+                    //     arrOfPolys[i].pos[1],
+                    //     arrOfPolys[i].pos[0] + collisionObject.mvt[0],
+                    //     arrOfPolys[i].pos[1] + collisionObject.mvt[1]);
                     arrOfPolys[i].outlineCol = arrOfPolys[i].collisionCol;
                     arrOfPolys[j].outlineCol = arrOfPolys[j].collisionCol;
+                    arrOfPolys[j].translate(collisionObject.mvt);
                 }
                 else
                 {
@@ -53,7 +53,6 @@ function SAT(polygonReferenceA, polygonReferenceB)
 {
     function projectedLengthComparison(polygonA, polygonB, mvtReference)
     {
-        
         let overlapBool;
         let mvtMagnitude;
         let mvtDir;
@@ -156,22 +155,37 @@ function SAT(polygonReferenceA, polygonReferenceB)
                 return false
             }
         }
-        
         vec2.scale(mvtReference, mvtDir, mvtMagnitude);
         return overlapBool;
     }
 
     // --------   --------
     let minimumTranslationVector = vec2.create();
-    // -------- check using edges of polygonA --------
-    if(!projectedLengthComparison(polygonReferenceA, polygonReferenceB, minimumTranslationVector))
+    let anotherMinTranslationVector = vec2.create();
+    
+    // projections from both polygons need to be true
+    if(projectedLengthComparison(polygonReferenceA, polygonReferenceB, minimumTranslationVector))
     {
-        return {collision: false, mvt: vec2.create()};
+        if(projectedLengthComparison(polygonReferenceB, polygonReferenceA, anotherMinTranslationVector))
+        {
+            if(vec2.squaredLength(minimumTranslationVector) < anotherMinTranslationVector)
+            {
+                return {collision: true, mvt: minimumTranslationVector};  
+            }
+            else
+            {
+                return {collision: true, mvt: anotherMinTranslationVector};
+            }
+            // vec2.add(minimumTranslationVector, minimumTranslationVector, anotherMinTranslationVector);
+            // return {collision: true, mvt: minimumTranslationVector};
+        }
+        else
+        {
+            return {collision: false, mvt: [0, 0]};
+        }
     }
-    // -------- check using edges of polygonB --------
-    if(!projectedLengthComparison(polygonReferenceB, polygonReferenceA, minimumTranslationVector))
+    else
     {
-        return {collision: false, mvt: vec2.create()};
+        return {collision: false, mvt: [0, 0]};
     }
-    return {collision: true, mvt: minimumTranslationVector}
 }
