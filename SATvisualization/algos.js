@@ -13,6 +13,7 @@ function pseudoBroadPhase(arrOfPolys)
             if(sqrdDist < Math.pow(arrOfPolys[i].radius + arrOfPolys[j].radius, 2))
             {
                 // narrow phase resolution
+                // so, arrOfPolys[i] is running into arrOfPolys[j]
                 let collisionObject = SAT(arrOfPolys[i], arrOfPolys[j]);
 
                 if(collisionObject.collision)
@@ -22,14 +23,14 @@ function pseudoBroadPhase(arrOfPolys)
                     //     arrOfPolys[i].pos[1],
                     //     arrOfPolys[i].pos[0] + collisionObject.mvt[0],
                     //     arrOfPolys[i].pos[1] + collisionObject.mvt[1]);
-                    arrOfPolys[i].outlineCol = arrOfPolys[i].collisionCol;
-                    arrOfPolys[j].outlineCol = arrOfPolys[j].collisionCol;
+                    // arrOfPolys[i].outlineCol = arrOfPolys[i].collisionCol;
+                    // arrOfPolys[j].outlineCol = arrOfPolys[j].collisionCol;
                     arrOfPolys[j].translate(collisionObject.mvt);
                 }
                 else
                 {
-                    arrOfPolys[i].outlineCol = arrOfPolys[i].defaultOutlineCol;
-                    arrOfPolys[j].outlineCol = arrOfPolys[j].defaultOutlineCol;
+                    // arrOfPolys[i].outlineCol = arrOfPolys[i].defaultOutlineCol;
+                    // arrOfPolys[j].outlineCol = arrOfPolys[j].defaultOutlineCol;
                 }
             }
             j += 1;
@@ -51,6 +52,10 @@ function pseudoBroadPhase(arrOfPolys)
 */
 function SAT(polygonReferenceA, polygonReferenceB)
 {
+    // get the direction from the difference between the polygon positions
+    let relativePosition = vec2.create();
+    vec2.subtract(relativePosition, polygonReferenceB.pos, polygonReferenceA.pos);
+
     function projectedLengthComparison(polygonA, polygonB, mvtReference)
     {
         let overlapBool;
@@ -65,13 +70,14 @@ function SAT(polygonReferenceA, polygonReferenceB)
             if(i < polygonA.vertices.length - 2)
             {
                 edge = vec2.fromValues(polygonA.vertices[i + 2] - polygonA.vertices[i], 	
-                        polygonA.vertices[i + 3] - polygonA.vertices[i + 1] );
+                                       polygonA.vertices[i + 3] - polygonA.vertices[i + 1] );
                 normal = vec2.fromValues(edge[1], -edge[0]);
             }
             // edge and normal from last vertex to first vertex
             else
             {
-                edge = vec2.fromValues(polygonA.vertices[0] - polygonA.vertices[i], polygonA.vertices[1] - polygonA.vertices[i + 1]);
+                edge = vec2.fromValues(polygonA.vertices[0] - polygonA.vertices[i],
+                                       polygonA.vertices[1] - polygonA.vertices[i + 1]);
                 normal = vec2.fromValues(edge[1], -edge[0]);
             }
 
@@ -155,6 +161,14 @@ function SAT(polygonReferenceA, polygonReferenceB)
                 return false
             }
         }
+
+        // check dot product between normal and direction and negate if they point in opposite directions
+        if(vec2.dot(mvtDir, relativePosition) < 0)
+        {
+            vec2.scale(mvtDir, mvtDir, -1.0);
+        }
+
+        // scale to be the size of the overlap
         vec2.scale(mvtReference, mvtDir, mvtMagnitude);
         return overlapBool;
     }
@@ -168,16 +182,14 @@ function SAT(polygonReferenceA, polygonReferenceB)
     {
         if(projectedLengthComparison(polygonReferenceB, polygonReferenceA, anotherMinTranslationVector))
         {
-            if(vec2.squaredLength(minimumTranslationVector) < anotherMinTranslationVector)
+            if(vec2.squaredLength(minimumTranslationVector) < vec2.squaredLength(anotherMinTranslationVector))
             {
-                return {collision: true, mvt: minimumTranslationVector};  
+                return {collision: true, mvt: minimumTranslationVector};
             }
             else
             {
                 return {collision: true, mvt: anotherMinTranslationVector};
             }
-            // vec2.add(minimumTranslationVector, minimumTranslationVector, anotherMinTranslationVector);
-            // return {collision: true, mvt: minimumTranslationVector};
         }
         else
         {
