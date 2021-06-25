@@ -27,7 +27,7 @@ class Polygon
     init()
     {
         stroke(this.outlineCol[0], this.outlineCol[1], this.outlineCol[2]);
-        let theta = 0;
+        let theta = Math.PI / 6;
         let deltaTheta = TWO_PI / this.numPoints;
         beginShape();
         for (let a = 0; a < this.numPoints; a++)
@@ -58,6 +58,7 @@ class Polygon
         vec2.scale(translationVec, this.pos, -1)
         this.translate(translationVec);
 
+        theta *= -1;
         for(let i = 0; i < this.vertices.length; i+=2)
         {
             let x = Math.cos(theta) * this.vertices[i] - Math.sin(theta) * this.vertices[i + 1];

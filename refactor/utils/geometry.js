@@ -34,8 +34,6 @@ function makeACircle(numPoints, radius)
     return {vertexData: theData, numVerts: numVerts};
 }
 
-//function makeAPolygon
-//var aCircleObj = makeACircle(circleNumSides, 1.0);
 var theUnitQuad = 
 [
     -1, +1, 0,
@@ -45,9 +43,23 @@ var theUnitQuad =
     +1, -1, 0,
     +1, +1, 0
 ];
+
+var rbUnitQuad = 
+[
+    -1, +1, 0,
+    -1, -1, 0,
+    +1, -1, 0,
+    +1, +1, 0
+]
 var theUnitTriangle = 
 [
-    1, -1, 0,
-    0, 1, 0,
-    -1, -1, 0
+     1, -1,
+     0,  1,
+    -1, -1,
 ];
+var rbUnitTriangle = 
+[
+     1, -1, 0,
+     0,  1, 0,
+    -1, -1, 0
+]
