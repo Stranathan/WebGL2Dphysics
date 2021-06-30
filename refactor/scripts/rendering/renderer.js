@@ -46,15 +46,17 @@ class Renderer
         this.gl.vertexAttribPointer(positionAttribLoc, 2, this.gl.FLOAT, false, 0, 0);
         this.gl.enableVertexAttribArray(positionAttribLoc);
         this.availableVaos.set("triangle", triangleVAO);
-        // // ---- Rectangle ----
-        // var rectangleVAO = this.gl.createVertexArray();
-        // this.gl.bindVertexArray(rectangleVAO);
-        // var rectangleVBO = this.gl.createBuffer();
-        // this.gl.bindBuffer(this.gl.ARRAY_BUFFER, rectangleVBO);
-        // this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(theUnitQuad), this.gl.STATIC_DRAW);
-        // this.gl.vertexAttribPointer(positionAttribLoc, 2, this.gl.FLOAT, false, 0, 0);
-        // this.gl.enableVertexAttribArray(positionAttribLoc);
-        // this.availableVaos.set("rectangle", rectangleVAO);
+        
+        // ---- Rectangle ----
+        var rectangleVAO = this.gl.createVertexArray();
+        this.gl.bindVertexArray(rectangleVAO);
+        var rectangleVBO = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, rectangleVBO);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(rectangleRenderingVertices), this.gl.STATIC_DRAW);
+        this.gl.vertexAttribPointer(positionAttribLoc, 2, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(positionAttribLoc);
+        this.availableVaos.set("rectangle", rectangleVAO);
+
         // // ---- Circle ----
         // var circleVAO = this.gl.createVertexArray();
         // this.gl.bindVertexArray(circleVAO);

@@ -36,12 +36,12 @@ function makeACircle(numPoints, radius)
 
 var theUnitQuad = 
 [
-    -1, +1, 0,
-    -1, -1, 0,
-    +1, -1, 0,
-    -1, +1, 0,
-    +1, -1, 0,
-    +1, +1, 0
+    -1, +1,
+    -1, -1,
+    +1, -1,
+    -1, +1,
+    +1, -1,
+    +1, +1,
 ];
 
 var rbUnitQuad = 

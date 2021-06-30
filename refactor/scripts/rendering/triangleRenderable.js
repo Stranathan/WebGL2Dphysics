@@ -5,7 +5,7 @@ class TriangleRenderable extends Renderable
         super(aRenderer, aTransform);
         this.shape = "triangle";
         this.vao = this.renderer.availableVaos.get(this.shape);
-        this.vertCount = 6;
+        this.vertCount = 3;
         this.renderer.add(this);
     }
 
@@ -20,6 +20,6 @@ class TriangleRenderable extends Renderable
         this.renderer.gl.uniformMatrix4fv(this.uniforms["view"], false, this.renderer.view); 
         this.renderer.gl.uniformMatrix4fv(this.uniforms["projection"], false, this.renderer.projection);
         //
-        this.renderer.gl.drawArrays(this.primitiveType, 0, 3);
+        this.renderer.gl.drawArrays(this.primitiveType, 0, this.vertCount);
     }
 }

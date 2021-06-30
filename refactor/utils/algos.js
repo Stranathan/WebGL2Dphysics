@@ -3,24 +3,25 @@
 */
 function pseudoBroadPhase(arrOfPolys)
 {
-    for(let i = 0; i < arrOfPolygons.length - 1; i++)
+    for(let i = 0; i < arrOfPolys.length - 1; i++)
     {
         let j = i + 1;
         
-        while(j < arrOfPolygons.length)
+        while(j < arrOfPolys.length)
         {
-            let sqrdDist = vec2.squaredDistance(arrOfPolys[i].pos, arrOfPolys[j].pos);
-            if(sqrdDist < Math.pow(arrOfPolys[i].radius + arrOfPolys[j].radius, 2))
-            {
+            let sqrdDist = vec3.squaredDistance(arrOfPolys[i].rigidBody.pos, arrOfPolys[j].rigidBody.pos);
+            if(sqrdDist < Math.pow(arrOfPolys[i].rigidBody.radius + arrOfPolys[j].rigidBody.radius, 2))
+            { 
                 // narrow phase resolution
-                // so, arrOfPolys[i] is running into arrOfPolys[j]
-                let collisionObject = SAT(arrOfPolys[i], arrOfPolys[j]);
-
+                // so, arrOfPolys[i].rigidBody is running into arrOfPolys[j].rigidBody
+                let collisionObject = SAT(arrOfPolys[i].rigidBody, arrOfPolys[j].rigidBody);
+                
                 if(collisionObject.collision)
                 {
-                    arrOfPolys[j].translate(collisionObject.mvt);
+                    arrOfPolys[j].rigidBody.translate(collisionObject.mvt);
                 }
             }
+
             j += 1;
         }
     }
@@ -42,30 +43,32 @@ function SAT(polygonReferenceA, polygonReferenceB)
 {
     // get the direction from the difference between the polygon positions
     let relativePosition = vec2.create();
-    vec2.subtract(relativePosition, polygonReferenceB.pos, polygonReferenceA.pos);
+    vec2.subtract(relativePosition,
+                  vec2.fromValues(polygonReferenceB.pos[0], polygonReferenceB.pos[1]),
+                  vec2.fromValues(polygonReferenceA.pos[0], polygonReferenceA.pos[1]));
 
     function projectedLengthComparison(polygonA, polygonB, mvtReference)
     {
         let overlapBool;
         let mvtMagnitude;
-        let mvtDir;
+        let mvtDir = "vertices are wrong";
 
-        for(let i = 0; i < polygonA.vertices.length; i+=2)
+        for(let i = 0; i < polygonA.vertices.length; i++)
         {
             let edge;
             let normal;
             // edges and normals from first vertex until second to last vertex
-            if(i < polygonA.vertices.length - 2)
+            if(i < polygonA.vertices.length - 1)
             {
-                edge = vec2.fromValues(polygonA.vertices[i + 2] - polygonA.vertices[i], 	
-                                       polygonA.vertices[i + 3] - polygonA.vertices[i + 1] );
+                edge = vec2.fromValues(polygonA.vertices[i + 1][0] - polygonA.vertices[i][0], 	
+                                       polygonA.vertices[i + 1][1] - polygonA.vertices[i][1]);
                 normal = vec2.fromValues(edge[1], -edge[0]);
             }
             // edge and normal from last vertex to first vertex
             else
             {
-                edge = vec2.fromValues(polygonA.vertices[0] - polygonA.vertices[i],
-                                       polygonA.vertices[1] - polygonA.vertices[i + 1]);
+                edge = vec2.fromValues(polygonA.vertices[0][0] - polygonA.vertices[i][0], 	
+                                       polygonA.vertices[0][1] - polygonA.vertices[i][1]);
                 normal = vec2.fromValues(edge[1], -edge[0]);
             }
 
@@ -75,9 +78,9 @@ function SAT(polygonReferenceA, polygonReferenceB)
             // Project each vertex's position vector of both polygons onto the axis.
             let minA;
             let maxA;
-            for(let a = 0; a < polygonA.vertices.length; a+=2)
+            for(let a in polygonA.vertices)
             {
-                let vertexPositionVec = vec2.fromValues(polygonA.vertices[a], polygonA.vertices[a + 1]);
+                let vertexPositionVec = vec2.fromValues(polygonA.vertices[a][0], polygonA.vertices[a][1]);
                 let projectedLen = vec2.dot(normal, vertexPositionVec);
                 
                 if(a == 0)
@@ -93,9 +96,9 @@ function SAT(polygonReferenceA, polygonReferenceB)
             }
             let minB;
             let maxB;
-            for(let b = 0; b < polygonB.vertices.length; b+=2)
+            for(let b in polygonB.vertices)
             {
-                let vertexPositionVec = vec2.fromValues(polygonB.vertices[b], polygonB.vertices[b + 1]);
+                let vertexPositionVec = vec2.fromValues(polygonB.vertices[b][0], polygonB.vertices[b][1]);
                 let projectedLen = vec2.dot(normal, vertexPositionVec);
 
                 if(b == 0)

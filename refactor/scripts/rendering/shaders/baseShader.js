@@ -58,7 +58,7 @@ void main()
     
     float edgeFactorVal = edgeFactor();
     //vec3 sCol = 0.5 + 0.5*cos(time + uv.xyx + vec3(0,2,4));
-    vec3 col = vec3(1. * sin(time), 0.1, 1.0) * (1. - edgeFactorVal);
+    vec3 col = vec3(1. * sin(time), 0.1, 1. * cos(time)) * (1. - edgeFactorVal);
 
     // transparency switch
     //float trans = when_eq(col.x + col.y + col.z, 0.0);

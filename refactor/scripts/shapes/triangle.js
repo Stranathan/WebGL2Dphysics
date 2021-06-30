@@ -7,8 +7,8 @@ class Triangle extends Polygon
         // design choice was to make rendering vertices and rigidbody vertices the same
         // done simply by cutting up a cirlce --> scale is radius
 
-        this.scale = 3;
-        this.radius = 3;
+        this.scale = scale;
+        this.radius = scale;
         mat4.scale(this.transform, this.transform, vec3.fromValues(scale, scale, scale));
         this.renderable = new TriangleRenderable(aRenderer, this.transform);
         this.rigidBody = new RigidBody(this.pos, vec3.create(), this.transform, this.radius);

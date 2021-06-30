@@ -4,6 +4,7 @@ class ProcessManager
     {
         this.renderer = new Renderer(gl)
         this.inputManager = new InputManager(this.renderer); // needs to know about resolution
+        this.physicsWorld = new PhysicsWorld();
         // objectManager
         this.arrOfPolygons = new Array();
         //  
@@ -17,8 +18,19 @@ class ProcessManager
     
     init()
     {
-        var r = new Triangle(this.renderer, vec3.fromValues(screenMousePos[0], screenMousePos[1], 0),  3.0);
-        this.arrOfPolygons.push(r);
+        var t1 = new Triangle(this.renderer, vec3.fromValues(screenMousePos[0] + 1, screenMousePos[1] + 1, 0),  1.0);
+        var t2 = new Triangle(this.renderer, vec3.fromValues(10, 5, 0),  5.0);
+        var r1 = new Rectangle(this.renderer, vec3.fromValues(15, -5, 0),  2.0);
+        //
+        this.arrOfPolygons.push(t1);
+        this.arrOfPolygons.push(t2);
+        this.arrOfPolygons.push(r1);
+        //
+        this.physicsWorld.initializeObjects(this.arrOfPolygons);
+
+        this.arrOfPolygons[0].rotate(90);
+        this.arrOfPolygons[1].rotate(100);
+        this.arrOfPolygons[2].rotate(-45);
     }
 
     update()
@@ -28,7 +40,7 @@ class ProcessManager
         this.previous = now;        
         
         this.accumulator += delta;
-
+        
         if (this.accumulator >= frameDuration)
         {
             this.physicsTime += dt;
@@ -41,9 +53,12 @@ class ProcessManager
 
     physicsProcess(pt)
     {
-        //physicsWorld.process();
-        this.arrOfPolygons[0].translate(screenMousePos);
-        this.arrOfPolygons[0].rotate(pt);
+        if(screenMousePos)
+        {
+            this.arrOfPolygons[0].translate(vec2.fromValues(screenMousePos[0] - this.arrOfPolygons[0].pos[0], screenMousePos[1] - this.arrOfPolygons[0].pos[1])  );
+        }
+        
+        this.physicsWorld.process();
     }
 
     renderProcess(t)
