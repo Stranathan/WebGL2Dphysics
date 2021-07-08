@@ -4,10 +4,14 @@ class InputManager
     {
         this.renderer = renderer;
         //
+        this.keypad = vec2.create();
+        //
         window.addEventListener( "mouseDown", this.mouseDown);
         window.addEventListener( "mousemove", this.mouseMove);
         window.addEventListener( "mouseup", this.mouseUp);
+        window.addEventListener( "keypress", this.logKey);
     }
+
     mouseDown = event => 
     {}
     mouseMove = event => 
@@ -23,4 +27,29 @@ class InputManager
     }
     mouseUp = event => 
     {}
+
+    logKey = event =>
+    {
+        switch(event.code) 
+        {
+            case "KeyW":
+                this.keypad = vec2.create();
+                this.keypad[1] = 1;
+                break;
+            case "KeyS":
+                this.keypad = vec2.create();
+                this.keypad[1] = -1;
+                break;
+            case "KeyD":
+                this.keypad = vec2.create();
+                this.keypad[0] = 1;
+                break;
+            case "KeyA":
+                this.keypad = vec2.create();
+                this.keypad[0] = -1;
+                break;
+            default:
+              // code block
+          } 
+    }
 }

@@ -2,21 +2,32 @@ class RigidBody
 {
     constructor(position, velocity, transform, radius)
     {
+        this.restitutionCoeff = 0.6;
+        this.mass = 1.0;
+        this.inv_mass = 1.0 / this.mass;
+        this.gravity = false;
+        //
         this.pos = position;
-        this.angle = 0;
-        this.radius = radius;
         this.inv_pos = vec3.fromValues(-this.pos[0], -this.pos[1], 0);
         this.vel = velocity;
+        this.accl = vec3.create();
+        //
+        this.angle = 0;
+        this.radius = radius;
+        //
         this.transform = transform;
         this.vertices = new Array();
         this.geometry = new Array();
-        this.gravity = false;
         this.scaleVec = vec3.fromValues(this.radius, this.radius, this.radius);
     }
-    
     eulerUpdate()
     {
-        
+        vec3.add(this.vel, this.vel, this.accl);
+        let differenceInPos = vec3.create();
+        vec3.add(differenceInPos, this.pos, this.vel);
+        vec3.subtract(differenceInPos, differenceInPos, this.pos);
+        this.accl = vec3.create();
+        this.translate(differenceInPos);
     }
     rotate(angle)
     {

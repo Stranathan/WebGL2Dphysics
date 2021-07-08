@@ -14,7 +14,6 @@ class PhysicsWorld
         }
         else
         {
-            this.objects = new Array();
             this.objects.push(obj);
         }
     }
@@ -25,6 +24,8 @@ class PhysicsWorld
     // removeObject(){}
     process()
     {
+        this.objects[0].rigidBody.eulerUpdate();
+        //console.log(this.objects[0].rigidBody.pos);
         this.resolveCollisions();
     }
 

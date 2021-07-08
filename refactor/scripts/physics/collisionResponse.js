@@ -1,0 +1,42 @@
+/**
+ * Example function in JavaScript
+ * A, B are rigidBody objects
+ * Uses glMatrix as its vector/ matrix library
+ */
+ function resolveCollision(A, B)
+ {
+    // relative velocity
+    let relativeVelocity = vec3.create();
+    vec3.subtract(relativeVelocity, A.vel, B.vel);
+
+    // contactNormal
+    let contactNormal = vec3.create();
+    vec3.subtract(contactNormal, A.pos, B.pos);
+    vec3.normalize(contactNormal, contactNormal);
+
+    let seperatingVelocityMagnitude = vec3.dot( relativeVelocity, contactNormal );
+
+    // Do not resolve if velocities are separating
+    if(seperatingVelocityMagnitude > 0)
+        return;
+
+    // Take least elastic restitutionCoeff coefficient
+    let e = 2. * Math.min( A.restitutionCoeff, B.restitutionCoeff);
+    // Calculate part of the impulse in the direction of the contact normal
+    // -(1 + e) * relativeVelocity / (A.inv_mass - B.inv_mass)
+    vec3.scale(relativeVelocity, relativeVelocity, -(1 + e) / (A.inv_mass + B.inv_mass));
+
+    let impulseMagnitudeInContactNormal = vec3.dot(relativeVelocity, contactNormal);
+
+    let impulse = vec3.create();
+    vec3.scale(impulse, contactNormal, impulseMagnitudeInContactNormal);
+
+    // Apply impulse to bodies' velocities
+    let tmp = vec3.create();
+    vec3.scale(tmp, impulse, 1.0 / A.mass);
+
+    vec3.add(A.vel, A.vel, tmp); 
+    tmp = vec3.create();
+    vec3.scale(tmp, impulse, 1.0 / B.mass);
+    vec3.subtract(B.vel, B.vel, tmp);
+}

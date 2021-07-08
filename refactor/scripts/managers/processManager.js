@@ -18,9 +18,9 @@ class ProcessManager
     
     init()
     {
-        var t1 = new Triangle(this.renderer, vec3.fromValues(screenMousePos[0] + 1, screenMousePos[1] + 1, 0),  1.0);
-        var t2 = new Triangle(this.renderer, vec3.fromValues(10, 5, 0),  5.0);
-        var r1 = new Rectangle(this.renderer, vec3.fromValues(15, -5, 0),  2.0);
+        var t1 = new Triangle(this.renderer,  vec3.fromValues(0, 0, 0),  1.0);
+        var t2 = new Triangle(this.renderer,  vec3.fromValues(10, 5, 0),  2.0);
+        var r1 = new Rectangle(this.renderer, vec3.fromValues(0, -15, 0), 20.0);
         //
         this.arrOfPolygons.push(t1);
         this.arrOfPolygons.push(t2);
@@ -53,11 +53,11 @@ class ProcessManager
 
     physicsProcess(pt)
     {
-        if(screenMousePos)
-        {
-            this.arrOfPolygons[0].translate(vec2.fromValues(screenMousePos[0] - this.arrOfPolygons[0].pos[0], screenMousePos[1] - this.arrOfPolygons[0].pos[1])  );
-        }
-        
+        vec3.add(this.arrOfPolygons[0].rigidBody.accl,
+                 this.arrOfPolygons[0].rigidBody.accl,
+                 vec3.fromValues(this.inputManager.keypad[0] * dt / 10,
+                                 this.inputManager.keypad[1] * dt / 10,
+                                 0));
         this.physicsWorld.process();
     }
 
