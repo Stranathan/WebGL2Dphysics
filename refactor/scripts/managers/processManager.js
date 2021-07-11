@@ -18,19 +18,48 @@ class ProcessManager
     
     init()
     {
-        var t1 = new Triangle(this.renderer,  vec3.fromValues(0, 0, 0),  1.0);
-        var t2 = new Triangle(this.renderer,  vec3.fromValues(10, 5, 0),  2.0);
-        var r1 = new Rectangle(this.renderer, vec3.fromValues(0, -15, 0), 20.0);
-        //
+        var t1 = new Triangle(this.renderer,  vec3.fromValues(-10, 0, 0),  1.0);
+        t1.rotate(90);
         this.arrOfPolygons.push(t1);
-        this.arrOfPolygons.push(t2);
-        this.arrOfPolygons.push(r1);
         //
-        this.physicsWorld.initializeObjects(this.arrOfPolygons);
+        var t2 = new Triangle(this.renderer,  vec3.fromValues(15, 5, 0),  2.0);
+        t2.rotate(Math.random() * 100);
+        t2.rigidBody.mass = 20;
+        t2.rigidBody.inv_mass = 1 / 20;
+        this.arrOfPolygons.push(t2);
+        //
+        
+        //create a bunch of random shapes in a grid
+        let spacingNum = 2;
+        for(let i = 1; i < 5; i++)
+        {
+            for(let j = 1; j < 5; j++)
+            {
+                let rnd = Math.floor(Math.random() * 2) + 1;
+                let shape;
+                if( rnd == 1 )
+                {
+                    shape = new Triangle(this.renderer,  vec3.fromValues(spacingNum * i, spacingNum * j, 0),  1.0);
+                }
+                else
+                {
+                    shape = new Rectangle(this.renderer, vec3.fromValues(spacingNum * i, spacingNum * j, 0), 1.0);
+                }
+                shape.rigidBody.gravity = true;
+                shape.rigidBody.mass = 1.5;
+                shape.rigidBody.inv_mass = 1 / shape.rigidBody.mass;
+                shape.rotate(Math.random() * 160);
+                this.arrOfPolygons.push(shape);
+            }
+        }
+        
+        var r1 = new Rectangle(this.renderer, vec3.fromValues(0, -40, 0), 40.0);
+        r1.rotate(-45);
+        r1.rigidBody.mass = 100;
+        r1.rigidBody.inv_mass = 1 / 100;
+        this.arrOfPolygons.push(r1);
 
-        this.arrOfPolygons[0].rotate(90);
-        this.arrOfPolygons[1].rotate(100);
-        this.arrOfPolygons[2].rotate(-45);
+        this.physicsWorld.initializeObjects(this.arrOfPolygons);
     }
 
     update()

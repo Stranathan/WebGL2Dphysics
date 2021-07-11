@@ -22,6 +22,11 @@ class RigidBody
     }
     eulerUpdate()
     {
+        if(this.gravity)
+        {
+            vec3.add(this.accl, this.accl, [0, littleG / 1000, 0]);    
+        }
+
         vec3.add(this.vel, this.vel, this.accl);
         let differenceInPos = vec3.create();
         vec3.add(differenceInPos, this.pos, this.vel);

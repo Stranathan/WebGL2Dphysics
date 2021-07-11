@@ -20,8 +20,7 @@ function pseudoBroadPhase(arrOfPolys)
                 {
                     // arrOfPolys[j].rigidBody.translate(collisionObject.mvt);
                     arrOfPolys[i].rigidBody.translate([-collisionObject.mvt[0], -collisionObject.mvt[1]]);
-
-                    resolveCollision(arrOfPolys[i].rigidBody, arrOfPolys[j].rigidBody);
+                    resolveCollision(arrOfPolys[i].rigidBody, arrOfPolys[j].rigidBody, collisionObject.mvt);
                 }
             }
 

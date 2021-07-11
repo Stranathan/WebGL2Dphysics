@@ -24,8 +24,10 @@ class PhysicsWorld
     // removeObject(){}
     process()
     {
-        this.objects[0].rigidBody.eulerUpdate();
-        //console.log(this.objects[0].rigidBody.pos);
+        for(let i = 0; i < this.objects.length - 1; i++)
+        {
+            this.objects[i].rigidBody.eulerUpdate();
+        }
         this.resolveCollisions();
     }
 
