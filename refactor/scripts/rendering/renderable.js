@@ -13,6 +13,7 @@ class Renderable
         //mat4.translate(this.transform, this.transform, this.positionComponent.position); // positionComponent.position should be a vec3
         this.primitiveType = this.renderer.gl.TRIANGLES; // otherwise wireframe shader won't work
         this.program = this.renderer.availablePrograms.get("base").program;
+
         this.uniforms = 
         { 
             resolution: this.renderer.availablePrograms.get("base").programUResolution,
@@ -21,5 +22,18 @@ class Renderable
             view: this.renderer.availablePrograms.get("base").programUView,
             projection: this.renderer.availablePrograms.get("base").programUProjection
         };
-    }    
+    } 
+    
+    setProgram(programName)
+    {
+        try 
+        {
+            this.program = this.renderer.availablePrograms.get(programName).program;
+        } 
+        catch (error) 
+        {
+            console.error(error);
+            this.program = this.renderer.availablePrograms.get("base").program;
+        }
+    }
 }

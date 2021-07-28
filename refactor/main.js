@@ -5,6 +5,8 @@ function main()
     var canvas = document.getElementById("cc");
     var gl = canvas.getContext("webgl2");
 
+    makeGUI();
+    
     if (!gl) 
     {
         return;

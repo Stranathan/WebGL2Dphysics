@@ -22,4 +22,8 @@ class TriangleRenderable extends Renderable
         //
         this.renderer.gl.drawArrays(this.primitiveType, 0, this.vertCount);
     }
+    setProgram(programName)
+    {
+        super.setProgram(programName);
+    }
 }

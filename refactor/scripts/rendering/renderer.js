@@ -72,7 +72,7 @@ class Renderer
     {
         let program = createProgramFromSources(this.gl, baseVS, baseFS);
         let programUTime = this.gl.getUniformLocation(program, "time");
-        let programUResolution = this.gl.getUniformLocation(program, "resoluton");
+        let programUResolution = this.gl.getUniformLocation(program, "resolution");
         let programUModel = this.gl.getUniformLocation(program, "model");
         let programUView = this.gl.getUniformLocation(program, "view");
         let programUProjection = this.gl.getUniformLocation(program, "projection");
@@ -84,6 +84,22 @@ class Renderer
             programUView: programUView,
             programUProjection, programUProjection
             });
+
+        // let anotherProgram = createProgramFromSources(this.gl, shadedPolygonVS, shadedPolygonFS);
+        // // let anotherProgramUTime = this.gl.getUniformLocation(anotherProgram, "time");
+        // // let anotherProgramUResolution = this.gl.getUniformLocation(anotherProgram, "resolution");
+        // // let anotherProgramUModel = this.gl.getUniformLocation(anotherProgram, "model");
+        // // let anotherProgramUView = this.gl.getUniformLocation(anotherProgram, "view");
+        // // let anotherProgramUProjection = this.gl.getUniformLocation(anotherProgram, "projection");
+        
+        // this.availablePrograms.set("base", 
+        //     {anotherProgram: anotherProgram,
+        //     programUTime: programUTime,
+        //     programUResolution: programUResolution,
+        //     programUModel: programUModel,
+        //     programUView: programUView,
+        //     programUProjection, programUProjection
+        //     });
     }
     add(aRendrable)
     {

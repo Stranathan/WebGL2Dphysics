@@ -11,6 +11,7 @@ class RectangleRenderable extends Renderable
 
     render(time)
     {
+        this.setProgram(theGUI.SHADER);
         this.renderer.gl.bindVertexArray(this.vao);
         this.renderer.gl.useProgram(this.program);
         //
@@ -21,5 +22,10 @@ class RectangleRenderable extends Renderable
         this.renderer.gl.uniformMatrix4fv(this.uniforms["projection"], false, this.renderer.projection);
         //
         this.renderer.gl.drawArrays(this.primitiveType, 0, this.vertCount);
+    }
+
+    setProgram(programName)
+    {
+        super.setProgram(programName);
     }
 }
