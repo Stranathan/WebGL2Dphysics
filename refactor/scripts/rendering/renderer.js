@@ -76,30 +76,30 @@ class Renderer
         let programUModel = this.gl.getUniformLocation(program, "model");
         let programUView = this.gl.getUniformLocation(program, "view");
         let programUProjection = this.gl.getUniformLocation(program, "projection");
-        this.availablePrograms.set("base", 
+        this.availablePrograms.set("wireframe", 
             {program: program,
             programUTime: programUTime,
             programUResolution: programUResolution,
             programUModel: programUModel,
             programUView: programUView,
-            programUProjection, programUProjection
+            programUProjection: programUProjection
             });
-
-        // let anotherProgram = createProgramFromSources(this.gl, shadedPolygonVS, shadedPolygonFS);
-        // // let anotherProgramUTime = this.gl.getUniformLocation(anotherProgram, "time");
-        // // let anotherProgramUResolution = this.gl.getUniformLocation(anotherProgram, "resolution");
-        // // let anotherProgramUModel = this.gl.getUniformLocation(anotherProgram, "model");
-        // // let anotherProgramUView = this.gl.getUniformLocation(anotherProgram, "view");
-        // // let anotherProgramUProjection = this.gl.getUniformLocation(anotherProgram, "projection");
         
-        // this.availablePrograms.set("base", 
-        //     {anotherProgram: anotherProgram,
-        //     programUTime: programUTime,
-        //     programUResolution: programUResolution,
-        //     programUModel: programUModel,
-        //     programUView: programUView,
-        //     programUProjection, programUProjection
-        //     });
+        let shadedProgram = createProgramFromSources(this.gl, shadedPolygonVS, shadedPolygonFS);
+        let shadedProgramUTime = this.gl.getUniformLocation(shadedProgram, "time");
+        let shadedProgramUResolution = this.gl.getUniformLocation(shadedProgram, "resolution");
+        let shadedProgramUModel = this.gl.getUniformLocation(shadedProgram, "model");
+        let shadedProgramUView = this.gl.getUniformLocation(shadedProgram, "view");
+        let shadedProgramUProjection = this.gl.getUniformLocation(shadedProgram, "projection");
+        this.availablePrograms.set("shaded", 
+                                    {program:            shadedProgram,
+                                     programUTime:       shadedProgramUTime,
+                                     programUResolution: shadedProgramUResolution,
+                                     programUModel:      shadedProgramUModel,
+                                     programUView:       shadedProgramUView,
+                                     programUProjection: shadedProgramUProjection
+                                    });
+        
     }
     add(aRendrable)
     {

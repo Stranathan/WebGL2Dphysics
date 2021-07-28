@@ -7,6 +7,8 @@ class ProcessManager
         this.physicsWorld = new PhysicsWorld();
         // objectManager
         this.arrOfPolygons = new Array();
+
+        makeGUI(this.arrOfPolygons);
         //  
         this.previous = window.performance.now();
         this.time = 0;
@@ -45,7 +47,7 @@ class ProcessManager
                 {
                     shape = new Rectangle(this.renderer, vec3.fromValues(spacingNum * i, spacingNum * j, 0), 1.0);
                 }
-                shape.rigidBody.gravity = true;
+                shape.rigidBody.gravity = false;
                 shape.rigidBody.mass = 1.5;
                 shape.rigidBody.inv_mass = 1 / shape.rigidBody.mass;
                 shape.rotate(Math.random() * 160);

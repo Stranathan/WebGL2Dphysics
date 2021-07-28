@@ -1,26 +1,24 @@
-// "Abstract" class for polygons"
+// "Abstract-ish" class for polygons"
 
 class Renderable
 {
     constructor(aRenderer, aTransform)
     {
         this.renderer = aRenderer;
-        //this.positionComponent = aPositionComponent;
         this.vao;
-        //this.transform = mat4.create();
         this.transform = aTransform;
         this.vertCount;
-        //mat4.translate(this.transform, this.transform, this.positionComponent.position); // positionComponent.position should be a vec3
         this.primitiveType = this.renderer.gl.TRIANGLES; // otherwise wireframe shader won't work
-        this.program = this.renderer.availablePrograms.get("base").program;
+        
+        this.program = this.renderer.availablePrograms.get("wireframe").program;
 
         this.uniforms = 
         { 
-            resolution: this.renderer.availablePrograms.get("base").programUResolution,
-            time: this.renderer.availablePrograms.get("base").programUTime,
-            model: this.renderer.availablePrograms.get("base").programUModel,
-            view: this.renderer.availablePrograms.get("base").programUView,
-            projection: this.renderer.availablePrograms.get("base").programUProjection
+            resolution: this.renderer.availablePrograms.get("wireframe").programUResolution,
+            time: this.renderer.availablePrograms.get("wireframe").programUTime,
+            model: this.renderer.availablePrograms.get("wireframe").programUModel,
+            view: this.renderer.availablePrograms.get("wireframe").programUView,
+            projection: this.renderer.availablePrograms.get("wireframe").programUProjection
         };
     } 
     
@@ -29,11 +27,27 @@ class Renderable
         try 
         {
             this.program = this.renderer.availablePrograms.get(programName).program;
+            this.uniforms = 
+            { 
+                resolution: this.renderer.availablePrograms.get(programName).programUResolution,
+                time: this.renderer.availablePrograms.get(programName).programUTime,
+                model: this.renderer.availablePrograms.get(programName).programUModel,
+                view: this.renderer.availablePrograms.get(programName).programUView,
+                projection: this.renderer.availablePrograms.get(programName).programUProjection
+            };
         } 
         catch (error) 
         {
             console.error(error);
-            this.program = this.renderer.availablePrograms.get("base").program;
+            this.program = this.renderer.availablePrograms.get("wireframe").program;
+            this.uniforms = 
+            { 
+                resolution: this.renderer.availablePrograms.get("wireframe").programUResolution,
+                time: this.renderer.availablePrograms.get("wireframe").programUTime,
+                model: this.renderer.availablePrograms.get("wireframe").programUModel,
+                view: this.renderer.availablePrograms.get("wireframe").programUView,
+                projection: this.renderer.availablePrograms.get("wireframe").programUProjection
+            };
         }
     }
 }

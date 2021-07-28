@@ -11,7 +11,6 @@ class RectangleRenderable extends Renderable
 
     render(time)
     {
-        this.setProgram(theGUI.SHADER);
         this.renderer.gl.bindVertexArray(this.vao);
         this.renderer.gl.useProgram(this.program);
         //
