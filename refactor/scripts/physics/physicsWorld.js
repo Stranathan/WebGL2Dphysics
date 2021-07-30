@@ -22,11 +22,11 @@ class PhysicsWorld
         this.objects = arr;
     }
     // removeObject(){}
-    process()
+    process(pt)
     {
         for(let i = 0; i < this.objects.length - 1; i++)
         {
-            this.objects[i].rigidBody.eulerUpdate();
+            this.objects[i].rigidBody.eulerUpdate(pt);
         }
         this.resolveCollisions();
     }

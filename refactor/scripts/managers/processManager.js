@@ -47,7 +47,7 @@ class ProcessManager
                 {
                     shape = new Rectangle(this.renderer, vec3.fromValues(spacingNum * i, spacingNum * j, 0), 1.0);
                 }
-                shape.rigidBody.gravity = false;
+                //shape.rigidBody.gravity = true;
                 shape.rigidBody.mass = 1.5;
                 shape.rigidBody.inv_mass = 1 / shape.rigidBody.mass;
                 shape.rotate(Math.random() * 160);
@@ -89,7 +89,7 @@ class ProcessManager
                  vec3.fromValues(this.inputManager.keypad[0] * dt / 10,
                                  this.inputManager.keypad[1] * dt / 10,
                                  0));
-        this.physicsWorld.process();
+        this.physicsWorld.process(pt);
     }
 
     renderProcess(t)

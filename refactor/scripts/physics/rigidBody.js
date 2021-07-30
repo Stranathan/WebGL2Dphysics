@@ -20,11 +20,11 @@ class RigidBody
         this.geometry = new Array();
         this.scaleVec = vec3.fromValues(this.radius, this.radius, this.radius);
     }
-    eulerUpdate()
+    eulerUpdate(pt)
     {
         if(this.gravity)
         {
-            vec3.add(this.accl, this.accl, [0, littleG / 1000, 0]);    
+            vec3.add(this.accl, this.accl, [0, littleG * 0.0167, 0]);    
         }
 
         vec3.add(this.vel, this.vel, this.accl);

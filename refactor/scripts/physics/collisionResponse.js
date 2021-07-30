@@ -29,6 +29,9 @@
     let impulse = vec3.create();
     let theMTV = vec3.fromValues(-mtv[0], -mtv[1], 0);
     vec3.normalize(theMTV, theMTV);
+    // For friction:
+    let tangentialDir = vec3.fromValues(theMTV[1], -theMTV[0], 0.0);
+    //
     let impulseMagnitudeInContactNormal = vec3.dot(relativeVelocity, theMTV);
 
     vec3.scale(impulse, theMTV, impulseMagnitudeInContactNormal);
@@ -41,4 +44,16 @@
     tmp = vec3.create();
     vec3.scale(tmp, impulse, 1.0 / B.mass);
     vec3.subtract(B.vel, B.vel, tmp);
+
+    // add friction
+    // F_fr = -mu * |F_n| * tangential_comp_vel
+    let mu = 0.43;
+    let F_n = impulseMagnitudeInContactNormal;
+    let A_VelTangentialComponentMagnitude = vec3.dot(tangentialDir, A.vel);
+    let friction = vec3.create();
+    vec3.scale(friction, tangentialDir, -mu * F_n * A_VelTangentialComponentMagnitude);
+    vec3.add(A.vel, A.vel, friction); 
+
+    vec3.scale(friction, friction, -1);
+    vec3.add(B.vel, B.vel, friction); 
 }
